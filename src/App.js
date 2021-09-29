@@ -8,27 +8,12 @@ function App() {
   const [darkTheme, setDarkTheme] = useState(false);
   const [todoList, setTodoList] = useState([]);
   const [userInput, setUserInput] = useState('');
-  const [taskComplete, setTaskIsComplete] = useState(false);
+  const [taskComplete, setTaskComplete] = useState(false);
   const [seeCompleted, setSeeCompleted] = useState(false);
 
   const seeComplete = () => {
     return setSeeCompleted(!seeCompleted);
   };
-  // const [data, setData] = useState([]);
-  // const url = './data.json';
-
-  // useEffect(() => {
-  //   fetch(url)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setData(data);
-  //       setTodoList([...data, ...todoList, {
-  //         text: userInput,
-  //         isComplete: taskComplete
-  //       }]);
-  //     });
-  // }, []);
-  // console.log("data", data);
 
 
   const handleClick = () => {
@@ -36,7 +21,7 @@ function App() {
   };
 
   const taskStatus = () => {
-    setTaskIsComplete(true);
+    setTaskComplete(true);
   };
 
   const addItem = () => {
@@ -44,23 +29,28 @@ function App() {
       text: userInput,
       isComplete: taskComplete
     }]);
-    setTaskIsComplete(false);
+    setTaskComplete(false);
+  };
+
+  const clear = () => {
+    console.log("Click");
+    setTodoList([]);
   };
 
 
-  const getItems = () => {
+  const getItems = (index) => {
     return todoList.map((item, index) => (
       <ul className="custom-ul" key={index}>
         <li className={darkTheme ? "custom-li-dark" : "custom-li"}>
           {item.isComplete ?
             <input type="radio" checked /> :
-            <input type="radio" />}
+            <input type="radio" />}{' '}
           {item.text}
         </li>
       </ul>
     ));
   };
-
+  console.log("Test", todoList);
   const getIsCompleteItems = () => {
     let result = todoList.filter((item) => item.isComplete);
     return result.map((item) => (
@@ -129,8 +119,8 @@ function App() {
         </div>
         <div className={darkTheme ? 'app-content-dark' : 'app-content'}>
           <div className={darkTheme ? "content-container-dark" : 'content-container-light'}>
-            {/* <button onClick={handleClick}>Change Theme</button>{''} */}
             {seeCompleted ? getIsCompleteItems() : getItems()}
+            <hr></hr>
             <div className={darkTheme ? "box-options-dark" : "box-options"}>
               <div className="option">{todoList.length} items left</div>
               <div className="option">
@@ -140,8 +130,9 @@ function App() {
                   <li onClick={seeComplete} className="list-item">Completed</li>
                 </ul>
               </div>
-              <div className="option">Clear Completed</div>
+              <div className="option"><button onClick={clear}>Clear</button></div>
             </div>
+            <hr></hr>
           </div>
         </div>
       </div>
