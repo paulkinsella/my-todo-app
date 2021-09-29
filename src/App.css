@@ -271,4 +271,26 @@ body {
     background: none;
     border: none;
   }
+
+  .box-options {
+    font-size: 12px;
+    margin: auto;
+    display: flex;
+  }
+
+  .box-options-dark {
+    font-size: 12px;
+    margin: auto;
+    display: flex;
+    color: #fff;
+  }
+
+  .option-menu {
+    padding: 0px;
+    display: inline-flex;
+    list-style: none;
+  }
+  .option {
+    width: 40%;
+  }
 }
