@@ -3,13 +3,84 @@ import './App.css';
 import Sun from "./SVG/Sun";
 import Moon from "./SVG/Moon";
 import Tick from './SVG/Tick';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle, faCircle, faCoffee, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 function App() {
   const [darkTheme, setDarkTheme] = useState(false);
-  const [todoList, setTodoList] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [taskComplete, setTaskComplete] = useState(false);
   const [seeCompleted, setSeeCompleted] = useState(false);
+  const [completeValueRecieved, setCompleteValueRecieved] = useState(false);
+  const [data, setData] = useState([]);
+  const url = 'https://6158b1bd5167ba00174bbbb2.mockapi.io/test';
+  const name = 'Paul';
+
+  useEffect(() => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        setData(data);
+      });
+  }, []);
+  console.log("data", data);
+
+  const date = new Date();
+  console.log("Date", date);
+
+  const postItem = () => {
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "createdAt": date,
+        "name": name,
+        "avatar": "https://cdn.fakercloud.com/avatars/spacewood__128.jpg",
+        "text": userInput,
+        "isComplete": taskComplete,
+        "id": data.length + 1
+      })
+    })
+      .then(data => data.json());
+  };
+
+  // const deleteItem = (item) => {
+  //   fetch(url + '/' + item.id, {
+  //     method: 'DELETE',
+  //     headers: {
+  //       'Content-type': 'application/json'
+  //     },
+  //     body: JSON.stringify({
+  //       "createdAt": date,
+  //       "name": name,
+  //       "avatar": "https://cdn.fakercloud.com/avatars/spacewood__128.jpg",
+  //       "text": item.text,
+  //       "isComplete": completeValueRecieved,
+  //       "id": item.id
+  //     }),
+  //   });
+  // };
+
+  const updateItem = (item) => {
+    setCompleteValueRecieved(!completeValueRecieved);
+    console.log("Test", completeValueRecieved);
+    fetch(url + '/' + item.id, {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        "createdAt": date,
+        "name": name,
+        "avatar": "https://cdn.fakercloud.com/avatars/spacewood__128.jpg",
+        "text": item.text,
+        "isComplete": true,
+        "id": item.id
+      }),
+    });
+  };
 
   const seeComplete = () => {
     return setSeeCompleted(!seeCompleted);
@@ -25,62 +96,73 @@ function App() {
   };
 
   const addItem = () => {
-    setTodoList([...todoList, {
+    setData([...data, {
       text: userInput,
       isComplete: taskComplete
     }]);
     setTaskComplete(false);
+    postItem();
   };
 
   const clear = () => {
     console.log("Click");
-    setTodoList([]);
+    setData([]);
   };
 
 
-  const getItems = (index) => {
-    return todoList.map((item, index) => (
+  const getItems = () => {
+    return data.map((item, index) => (
       <ul className="custom-ul" key={index}>
-        <li className={darkTheme ? "custom-li-dark" : "custom-li"}>
-          {item.isComplete ?
-            <input type="radio" checked /> :
-            <input type="radio" />}{' '}
-          {item.text}
+        <li className={darkTheme ?
+          "custom-li-dark" : "custom-li"}>
+          <div className="li-content-container">{item.isComplete ?
+            <div className="done-container"> <FontAwesomeIcon color={'#2fa305'} icon={faCheckCircle} /></div> :
+            <button onClick={() => {
+              updateItem(item);
+            }}>Set Done </button>}
+          </div>
+          <div className="li-content-container">
+            {item.text}
+          </div>
+          <div className="li-content-container">
+            <div className="delete-container">  <FontAwesomeIcon
+              color={'#e81031'}
+              icon={faTrash} /></div>
+          </div>
         </li>
-      </ul>
+
+      </ul >
     ));
   };
-  console.log("Test", todoList);
+
+
   const getIsCompleteItems = () => {
-    let result = todoList.filter((item) => item.isComplete);
-    return result.map((item) => (
-      <ul className="custom-ul">
-        <li className={darkTheme ? "custom-li-dark" : "custom-li"}>
-          {item.isComplete ?
-            <input type="radio" checked /> :
-            <input type="radio" />}
-          {item.text}
+    let result = data.filter((item) => item.isComplete);
+    return result.map((item, index) => (
+      <ul className="custom-ul" key={index}>
+        <li className={darkTheme ?
+          "custom-li-dark" : "custom-li"}>
+          <div className="li-content-container">{item.isComplete ?
+            <FontAwesomeIcon color={'#2fa305'} icon={faCheckCircle} size={"10x"} /> :
+            <button onClick={() => {
+              updateItem(item);
+            }}>Set Done </button>}
+          </div>
+          <div className="li-content-container">
+            {item.text}
+          </div>
+          <div className="li-content-container">
+            <FontAwesomeIcon
+              color={'#e81031'}
+              icon={faTrash} />
+          </div>
         </li>
-      </ul>
+
+      </ul >
     ));
   };
 
-  const getIsActiveItems = () => {
-    let result = todoList.filter((item) => !item.isComplete);
-    return result.map((item) => (
-      <ul className="custom-ul">
-        <li className={darkTheme ? "custom-li-dark" : "custom-li"}>
-          {item.isComplete ?
-            <input type="radio" checked /> :
-            <input type="radio" />}
-          {item.text}
-        </li>
-      </ul>
-    ));
-  };
 
-
-  console.log("TodoList", todoList);
   return (
     <div className="App">
       <div className="app-container">
@@ -122,7 +204,7 @@ function App() {
             {seeCompleted ? getIsCompleteItems() : getItems()}
             <hr></hr>
             <div className={darkTheme ? "box-options-dark" : "box-options"}>
-              <div className="option">{todoList.length} items left</div>
+              <div className="option">{data.length} items left</div>
               <div className="option">
                 <ul className="option-menu">
                   <li onClick={seeComplete} className="list-item">All</li>
