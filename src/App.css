@@ -132,6 +132,7 @@ body {
 }
 
 .custom-li {
+  display: flex;
   color: black;
   border-top: solid 0.5px #383a4f;
   border-bottom: solid 0.5px #383a4f;
@@ -139,6 +140,7 @@ body {
 }
 
 .custom-li-dark {
+  display: flex;
   color: white;
   border-top: solid 0.5px #383a4f;
   border-bottom: solid 0.5px #383a4f;
@@ -170,6 +172,22 @@ body {
 .list-item {
   cursor: pointer;
   margin-left: 10px;
+}
+
+.li-content-container {
+  /* padding-top: 15px; */
+  margin: auto;
+  width: 33%;
+  text-align: center;
+  font-size: 20px;
+}
+
+.done-container {
+  font-size: 35px;
+}
+
+.delete-container {
+  font-size: 35px;
 }
 
 @media only screen and (max-width: 620px) {
